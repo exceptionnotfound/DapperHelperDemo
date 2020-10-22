@@ -17,7 +17,7 @@ namespace DapperHelperDemo
             Console.WriteLine("---------------Insert SQL------------------");
             Console.WriteLine(insertSql);
             Console.WriteLine("---------------Parameters------------------");
-            foreach(var parameterName in parameters.ParameterNames)
+            foreach (var parameterName in parameters.ParameterNames)
             {
                 var value = parameters.Get<dynamic>(parameterName);
                 Console.WriteLine(parameterName + ": " + value);
@@ -25,13 +25,13 @@ namespace DapperHelperDemo
 
             Console.WriteLine("--------------Update SQL-------------------");
 
+            //Remove the WHERE clause to see an exception thrown by DapperHelper.
             DapperHelper updateHelper = new DapperHelper("UpdateTableName", "WHERE ID = @id");
             updateHelper.AddCondition("id", 5);
             updateHelper.Add("DateTimeValue", DateTime.Now);
             updateHelper.Add("LongValue", 5827453L);
-            
             //Uncomment the below line to see an exception thrown by DapperHelper
-            //updateHelper.Add("DateTimeValue", DateTime.Now.AddDays(-7)); //This will be ignored
+            //updateHelper.Add("DateTimeValue", DateTime.Now.AddDays(-7));
 
             var updateSql = updateHelper.UpdateSql;
             var updateParameters = updateHelper.Parameters;
@@ -43,6 +43,8 @@ namespace DapperHelperDemo
                 var value = updateParameters.Get<dynamic>(parameterName);
                 Console.WriteLine(parameterName + ": " + value);
             }
+
+            Console.ReadLine();
         }
     }
 }
