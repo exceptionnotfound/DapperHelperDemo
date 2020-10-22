@@ -22,6 +22,27 @@ namespace DapperHelperDemo
                 var value = parameters.Get<dynamic>(parameterName);
                 Console.WriteLine(parameterName + ": " + value);
             }
+
+            Console.WriteLine("--------------Update SQL-------------------");
+
+            DapperHelper updateHelper = new DapperHelper("UpdateTableName", "WHERE ID = @id");
+            updateHelper.AddCondition("id", 5);
+            updateHelper.Add("DateTimeValue", DateTime.Now);
+            updateHelper.Add("LongValue", 5827453L);
+            
+            //Uncomment the below line to see an exception thrown by DapperHelper
+            //updateHelper.Add("DateTimeValue", DateTime.Now.AddDays(-7)); //This will be ignored
+
+            var updateSql = updateHelper.UpdateSql;
+            var updateParameters = updateHelper.Parameters;
+
+            Console.WriteLine(updateSql);
+
+            foreach (var parameterName in updateParameters.ParameterNames)
+            {
+                var value = updateParameters.Get<dynamic>(parameterName);
+                Console.WriteLine(parameterName + ": " + value);
+            }
         }
     }
 }

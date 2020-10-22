@@ -11,13 +11,16 @@ namespace DapperHelperDemo
     /// </summary>
     public class DapperHelper
     {
-        private readonly SortedDictionary<string, object> _collection = new SortedDictionary<string, object>();
+        private readonly Dictionary<string, object> _parameters = new Dictionary<string, object>();
+        private readonly SortedDictionary<string, object> _conditionalParameters = new SortedDictionary<string, object>();
 
         private readonly string _tableName;
+        private readonly string _whereSql;
 
-        public DapperHelper(string tableName)
+        public DapperHelper(string tableName, string whereSql = null)
         {
             _tableName = tableName;
+            _whereSql = whereSql;
         }
 
         /// <summary>
@@ -29,10 +32,24 @@ namespace DapperHelperDemo
         /// <param name="value"></param>
         public void Add(string parameterName, object value)
         {
-            if (_collection.ContainsKey(parameterName))
+            if (_parameters.ContainsKey(parameterName))
                 throw new DuplicateNameException("This field was already declared");
 
-            _collection.Add(parameterName, value);
+            _parameters.Add(parameterName, value);
+        }
+
+        /// <summary>
+        /// Method to add variables that will not be affected by insert or update
+        /// operations but are necessary for use in the where clause
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <param name="value"></param>
+        public void AddCondition(string parameterName, object value)
+        {
+            if (_parameters.ContainsKey(parameterName) || _conditionalParameters.ContainsKey(parameterName))
+                throw new DuplicateNameException("This field was already declared");
+
+            _conditionalParameters.Add(parameterName, value);
         }
 
 
@@ -45,17 +62,42 @@ namespace DapperHelperDemo
         {
             get
             {
-                if (_collection.Keys.Count == 0)
-                    throw new Exception("Attempted to perform an insert without any input parameters.  DapperHelper.InsertSql");
+                if (_parameters.Keys.Count == 0)
+                    throw new Exception("Attempted to perform an insert without any input parameters.");
 
-                var fields = string.Join(", ", _collection.Keys);
-                var values = string.Join(", @", _collection.Keys);
+                var fields = string.Join(", ", _parameters.Keys);
+                var values = string.Join(", @", _parameters.Keys);
                 return "DECLARE @output table(ID bigint); " +
-                       $"INSERT INTO {_tableName}({fields}) " +
+                        $"INSERT INTO {_tableName}({fields}) " +
                         "OUTPUT INSERTED.[ID] " +
                         "INTO @output " +
                         $"VALUES(@{values}) " +
                         "SELECT * FROM @output;";
+            }
+        }
+
+        /// <summary>
+        /// Creates an update statement for a single record based on the key value pairs
+        /// that have been added 
+        /// Throws an exception if the collection is empty
+        /// </summary>
+        public string UpdateSql
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_whereSql))
+                    throw new Exception("Attempted to perform an update without providing a where clause.  DapperHelper.UpdateSql");
+
+                if (_parameters.Keys.Count == 0)
+                    throw new Exception("Attempted to perform an update without any input parameters.  DapperHelper.UpdateSql");
+
+                var sb = new StringBuilder();
+                foreach (var parameterName in _parameters.Keys)
+                {
+                    sb.Append($"{parameterName} = @{parameterName}, ");
+                }
+
+                return $"UPDATE {_tableName} SET {sb.ToString().Substring(0, sb.Length - 2)} {_whereSql};";
             }
         }
 
@@ -68,9 +110,13 @@ namespace DapperHelperDemo
             get
             {
                 var parms = new DynamicParameters();
-                foreach (var parameterName in _collection.Keys)
+                foreach (var parameterName in _parameters.Keys)
                 {
-                    parms.Add(parameterName, _collection[parameterName]);
+                    parms.Add(parameterName, _parameters[parameterName]);
+                }
+                foreach (var parameterName in _conditionalParameters.Keys)
+                {
+                    parms.Add(parameterName, _conditionalParameters[parameterName]);
                 }
                 return parms;
             }
