@@ -6,4 +6,4 @@ The posts for this series are part of my paid newsletter [The Catch Block](https
 The issues that use this repository are:
 
 * [The Catch Block #31 - Dapper Helper Beginnings](https://exceptionnotfound.net/the-catch-block-31-dapper-helper-beginnings/)
-* The Catch Block #32 - Dapper Helper UPDATEs (publishing on Oct 28)
+* [The Catch Block #32 - Dapper Helper UPDATEs](https://exceptionnotfound.net/the-catch-block-32-dapper-helper-updates/)
