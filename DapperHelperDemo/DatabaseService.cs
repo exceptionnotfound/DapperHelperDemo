@@ -130,14 +130,14 @@ namespace DapperHelperDemo
         }
 
 
-    public T ExecuteInsert<T>(DapperHelper helper)
-    {
-        return ExecuteScalar<T>(helper.InsertSql, helper.Parameters);
-    }
+        public T ExecuteInsert<T>(DapperHelper helper)
+        {
+            return ExecuteScalar<T>(helper.InsertSql, helper.Parameters);
+        }
 
-    public void ExecuteUpdate(DapperHelper helper)
-    {
-        Execute(helper.UpdateSql, helper.Parameters);
-    }
+        public void ExecuteUpdate(DapperHelper helper)
+        {
+            Execute(helper.UpdateSql, helper.Parameters);
+        }
     }
 }

@@ -6,13 +6,13 @@ namespace DapperHelperDemo
     {
         static void Main(string[] args)
         {
-DapperHelper helper = new DapperHelper("TableName");
-helper.Add("IntValue", 5);
-helper.Add("DateTimeValue", DateTime.Now);
-helper.Add("StringValue", "This is a string");
+            DapperHelper helper = new DapperHelper("TableName");
+            helper.Add("IntValue", 5);
+            helper.Add("DateTimeValue", DateTime.Now);
+            helper.Add("StringValue", "This is a string");
 
-var insertSql = helper.InsertSql;
-var parameters = helper.Parameters;
+            var insertSql = helper.InsertSql;
+            var parameters = helper.Parameters;
 
             Console.WriteLine("---------------Insert SQL------------------");
             Console.WriteLine(insertSql);
