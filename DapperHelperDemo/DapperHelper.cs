@@ -52,7 +52,6 @@ namespace DapperHelperDemo
             _conditionalParameters.Add(parameterName, value);
         }
 
-
         /// <summary>
         /// Creates an insert statement for a single record that returns the bigint 
         /// identity of the record inserted

@@ -71,7 +71,7 @@ namespace DapperHelperDemo
             myDB = new DatabaseService("ConnectionString");
             myDB.ExecuteUpdate(updateHelper);
 
-            //Comment out the lines to this point to run the sample
+            //Comment out the lines above this comment to run the sample
 
             Console.ReadLine();
         }

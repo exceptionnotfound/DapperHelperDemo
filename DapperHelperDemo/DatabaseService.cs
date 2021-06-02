@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -138,6 +139,34 @@ namespace DapperHelperDemo
         public void ExecuteUpdate(DapperHelper helper)
         {
             Execute(helper.UpdateSql, helper.Parameters);
+        }
+
+        public void ExecuteStoredProcedure(string sql)
+        {
+            ExecuteStoredProcedure(sql, null);
+        }
+
+        public void ExecuteStoredProcedure(string sql, object parameters)
+        {
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                conn.Query(sql, parameters, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public List<T> ExecuteStoredProcedure<T>(string sql, object parameters)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(ConnectionString))
+                {
+                    return conn.Query<T>(sql, parameters, commandType: CommandType.StoredProcedure).ToList();
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }
